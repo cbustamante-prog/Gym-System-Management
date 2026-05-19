@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="auth-card animate-in">
+            <div class="text-center mb-4">
+                <div style="width:56px;height:56px;border-radius:14px;background:rgba(212,175,55,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+                    <i class="fas fa-paper-plane text-gold" style="font-size:1.4rem;"></i>
+                </div>
+                <h3 class="text-gold fw-bold">Membership Application</h3>
+            </div>
+            <hr style="border-color: rgba(212,175,55,0.15);">
+            <div class="mb-4 mt-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="text-light fw-bold mb-1">{{ plan.name }}</h5>
+                        <p class="text-muted small mb-0">{{ plan.description }}</p>
+                    </div>
+                    <h4 class="text-gold fw-bold mb-0">₱{{ plan.price }}</h4>
+                </div>
+            </div>
+            <form method="POST">
+                <div class="mb-4">
+                    <label class="form-label"><i class="fas fa-credit-card me-1"></i>Payment Method</label>
+                    <select name="payment_method" id="payment_method" class="form-control" onchange="togglePaymentDetails()">
+                        <option value="Cash">💵 Cash / Walk-in</option>
+                        <option value="GCash">📱 GCash</option>
+                        <option value="PayPal">🅿️ PayPal</option>
+                        <option value="Card">💳 Credit/Debit Card</option>
+                    </select>
+                </div>
+
+                <!-- GCash Details -->
+                <div id="gcash-details" class="payment-details mb-4 animate-in" style="display:none;">
+                    <div class="p-3 rounded-3" style="background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.15);">
+                        <label class="form-label small">GCash Number</label>
+                        <input type="text" name="gcash_number" class="form-control" placeholder="09XX XXX XXXX">
+                    </div>
+                </div>
+
+                <!-- PayPal Details -->
+                <div id="paypal-details" class="payment-details mb-4 animate-in" style="display:none;">
+                    <div class="p-3 rounded-3" style="background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.15);">
+                        <label class="form-label small">PayPal Email</label>
+                        <input type="email" name="paypal_email" class="form-control" placeholder="example@paypal.com">
+                    </div>
+                </div>
+
+                <!-- Card Details -->
+                <div id="card-details" class="payment-details mb-4 animate-in" style="display:none;">
+                    <div class="p-3 rounded-3" style="background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.15);">
+                        <label class="form-label small">Card Number</label>
+                        <input type="text" name="card_number" class="form-control mb-3" placeholder="XXXX XXXX XXXX XXXX">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label small">Expiry</label>
+                                <input type="text" name="card_expiry" class="form-control" placeholder="MM/YY">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">CVV</label>
+                                <input type="password" name="card_cvv" class="form-control" placeholder="***">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg fw-bold">
+                        <i class="fas fa-check-circle me-2"></i>Confirm & Pay
+                    </button>
+                    <a href="{{ url_for('user_dashboard') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePaymentDetails() {
+    const method = document.getElementById('payment_method').value;
+    const allDetails = document.querySelectorAll('.payment-details');
+    
+    // Hide all
+    allDetails.forEach(el => el.style.display = 'none');
+    
+    // Show specific
+    if (method === 'GCash') document.getElementById('gcash-details').style.display = 'block';
+    else if (method === 'PayPal') document.getElementById('paypal-details').style.display = 'block';
+    else if (method === 'Card') document.getElementById('card-details').style.display = 'block';
+}
+</script>
+{% endblock %}

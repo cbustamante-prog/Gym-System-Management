@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 animate-in" style="position: relative; z-index: 1020;">
+    <div>
+        <h2 class="text-gold fw-bold mb-0">Member Directory</h2>
+        <p class="text-muted small mb-0">View and manage all registered gym members</p>
+    </div>
+    <div class="d-flex gap-2">
+        <div class="dropdown">
+            <button class="btn btn-dark btn-sm dropdown-toggle border-warning text-gold" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-sort me-1"></i> Sort By
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end border-warning shadow" aria-labelledby="sortDropdown">
+                <li><a class="dropdown-item {% if current_sort == 'newest' %}active text-dark bg-warning{% endif %}" href="{{ url_for('view_members', sort='newest') }}">Newest Members</a></li>
+                <li><a class="dropdown-item {% if current_sort == 'oldest' %}active text-dark bg-warning{% endif %}" href="{{ url_for('view_members', sort='oldest') }}">Oldest Members</a></li>
+                <li><hr class="dropdown-divider border-secondary"></li>
+                <li><a class="dropdown-item {% if current_sort == 'name_asc' %}active text-dark bg-warning{% endif %}" href="{{ url_for('view_members', sort='name_asc') }}">Name (A-Z)</a></li>
+                <li><a class="dropdown-item {% if current_sort == 'name_desc' %}active text-dark bg-warning{% endif %}" href="{{ url_for('view_members', sort='name_desc') }}">Name (Z-A)</a></li>
+                <li><hr class="dropdown-divider border-secondary"></li>
+                <li><a class="dropdown-item {% if current_sort == 'expiry_asc' %}active text-dark bg-warning{% endif %}" href="{{ url_for('view_members', sort='expiry_asc') }}">Expiry (Soonest)</a></li>
+                <li><a class="dropdown-item {% if current_sort == 'expiry_desc' %}active text-dark bg-warning{% endif %}" href="{{ url_for('view_members', sort='expiry_desc') }}">Expiry (Furthest)</a></li>
+                <li><hr class="dropdown-divider border-secondary"></li>
+                <li><a class="dropdown-item {% if current_sort == 'plan' %}active text-dark bg-warning{% endif %}" href="{{ url_for('view_members', sort='plan') }}">Membership Plan</a></li>
+            </ul>
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-warning btn-sm">
+            <i class="fas fa-arrow-left me-1"></i>Back
+        </a>
+    </div>
+</div>
+
+<div class="card animate-in animate-in-delay-1">
+    <div class="table-responsive">
+        <table class="table table-hover table-dark mb-0">
+            <thead>
+                <tr>
+                    <th>Member ID</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Active Plan</th>
+                    <th>Expiry Date</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in members %}
+                <tr>
+                    <td><span class="text-gold fw-bold">#{{ "%.6d"|format(member.id|int) }}</span></td>
+                    <td>{{ member.full_name }}</td>
+                    <td>{{ member.email }}</td>
+                    <td>
+                        {% if member.plan_name %}
+                            <span class="badge bg-success">{{ member.plan_name }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">No Active Plan</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted small">
+                        {{ member.expiry_date if member.expiry_date else 'N/A' }}
+                    </td>
+                    <td class="text-end">
+                        <button class="btn btn-outline-danger btn-sm" onclick="confirmDelete({{ member.id }}, '{{ member.full_name | replace("'", "\\'") }}')">
+                            <i class="fas fa-trash-can"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not members %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="fas fa-users-slash d-block mb-2" style="font-size: 2rem;"></i>
+                        No members found in the system.
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal (Simple JS) -->
+<script>
+function confirmDelete(id, name) {
+    if (confirm('Are you sure you want to remove ' + name + '? This will permanently delete their account and history.')) {
+        window.location.href = '/admin/members/delete/' + id;
+    }
+}
+</script>
+{% endblock %}

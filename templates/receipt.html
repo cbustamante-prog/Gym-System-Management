@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center mt-3">
+    <div class="col-md-8 col-lg-6">
+        <!-- Receipt Content to Download -->
+        <div id="receipt-content" class="bg-white text-dark p-4 p-md-5 rounded-4 shadow-lg mb-4 animate-in" style="width: 100%; max-width: 800px; margin: 0 auto; border: 1px solid #eee; position: relative; overflow: hidden;">
+            
+            <!-- Watermark Design -->
+            <div style="position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: rgba(212,175,55,0.06); border-radius: 50%;"></div>
+            
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <div class="mb-2">
+                    <i class="fas fa-dumbbell text-gold" style="font-size: 3rem; color: #d4af37 !important;"></i>
+                </div>
+                <h1 class="fw-bold m-0 text-dark" style="letter-spacing: 2px; font-size: 2.2rem;">Fit<span style="color: #d4af37;">Nova</span></h1>
+                <p class="text-secondary fw-bold" style="font-size: 1rem;">Athletic Performance Management</p>
+                <div class="badge bg-warning text-dark mt-1 px-4 py-2" style="background-color: {% if payment.payment_method == 'Cash' %}#d4af37{% else %}#2ecc71{% endif %} !important; color: #000 !important; font-weight: 800; font-size: 0.9rem;">
+                    {% if payment.payment_method == 'Cash' %}OFFICIAL RECEIPT (UNPAID){% else %}OFFICIAL RECEIPT (PAID){% endif %}
+                </div>
+            </div>
+
+            <!-- Meta Info -->
+            <div class="row mb-4">
+                <div class="col-6">
+                    <label class="text-dark small text-uppercase fw-bold d-block" style="font-size: 0.8rem; opacity: 0.8;">Receipt ID</label>
+                    <span class="fw-bold text-dark h5">{{ payment.transaction_id }}</span>
+                </div>
+                <div class="col-6 text-end">
+                    <label class="text-dark small text-uppercase fw-bold d-block" style="font-size: 0.8rem; opacity: 0.8;">Date Issued</label>
+                    <span class="fw-bold text-dark h6">{{ payment.payment_date.strftime('%b %d, %Y %H:%M') }}</span>
+                </div>
+            </div>
+
+            <hr style="border-top: 2px dashed #ccc; margin: 1rem 0;">
+
+            <!-- Member Section -->
+            <div class="mb-4">
+                <h6 class="fw-bold text-uppercase text-dark mb-3" style="font-size: 0.9rem; letter-spacing: 1px; opacity: 0.9;">Member Information</h6>
+                <div class="d-flex align-items-center p-3 rounded-3" style="background: #fbfbfb; border: 1px solid #f0f0f0;">
+                    <div class="bg-white rounded-circle shadow-sm p-3 me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border: 1px solid #eee;">
+                        <i class="fas fa-user text-gold" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold h5 m-0 text-dark">{{ payment.full_name }}</div>
+                        <div class="text-secondary fw-bold" style="font-size: 1rem;">{{ payment.email }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Table -->
+            <div class="mb-4">
+                <h6 class="fw-bold text-uppercase text-dark mb-3" style="font-size: 0.9rem; letter-spacing: 1px; opacity: 0.9;">Transaction Details</h6>
+                <div class="table-responsive">
+                    <table class="table table-borderless m-0">
+                        <thead>
+                            <tr class="border-bottom" style="border-color: #ddd !important;">
+                                <th class="text-dark py-2 px-0" style="opacity: 0.7; font-size: 0.9rem;">Description</th>
+                                <th class="text-end text-dark py-2 px-0" style="opacity: 0.7; font-size: 0.9rem;">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="py-3 px-0">
+                                    <div class="fw-bold text-dark h5 mb-1">{{ payment.plan_name }}</div>
+                                    <div class="text-secondary fw-bold" style="font-size: 0.9rem;">Standard membership subscription</div>
+                                </td>
+                                <td class="py-3 px-0 text-end fw-bold text-dark h5">₱{{ "%.2f"|format(payment.amount) }}</td>
+                            </tr>
+                            <tr class="border-top" style="border-color: #222 !important;">
+                                <td class="py-3 px-0 fw-bold h4">Total Amount</td>
+                                <td class="py-3 px-0 text-end h3 fw-bold" style="color: #d4af37;">₱{{ "%.2f"|format(payment.amount) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Payment Info Box -->
+            <div class="p-3 rounded-3 mb-4 text-center border" style="background-color: #fffaf0; border-color: #fce5cd !important;">
+                <div class="text-uppercase small fw-bold mb-1 text-secondary" style="font-size: 0.8rem;">Payment Method</div>
+                <div class="h5 fw-bold m-0 text-dark">
+                    <i class="fas {% if payment.payment_method == 'Cash' %}fa-wallet{% else %}fa-globe{% endif %} me-2" style="color: #2ecc71;"></i>
+                    {{ payment.payment_method }}
+                </div>
+            </div>
+
+            <!-- Instructions / Status -->
+            {% if payment.payment_method == 'Cash' %}
+            <div class="p-3 mb-4 rounded-3" style="background: rgba(52, 152, 219, 0.08); border: 1px dashed #3498db;">
+                <div class="d-flex align-items-start">
+                    <i class="fas fa-info-circle text-primary mt-1 me-3" style="font-size: 1.2rem;"></i>
+                    <div style="color: #1a5a8a; line-height: 1.5; font-weight: 600; font-size: 0.95rem;">
+                        <strong class="d-block mb-1 text-uppercase" style="font-size: 0.85rem;">Walk-in Instructions:</strong>
+                        Present this receipt at the front desk for verification and membership activation.
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="p-3 mb-4 rounded-3" style="background: rgba(46, 204, 113, 0.08); border: 1px dashed #2ecc71;">
+                <div class="d-flex align-items-start">
+                    <i class="fas fa-check-circle text-success mt-1 me-3" style="font-size: 1.2rem;"></i>
+                    <div style="color: #1e7e34; line-height: 1.5; font-weight: 600; font-size: 0.95rem;">
+                        <strong class="d-block mb-1 text-uppercase" style="font-size: 0.85rem;">Payment Confirmed:</strong>
+                        Your payment via {{ payment.payment_method }} has been processed. Your membership is now <strong>Active</strong>.
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Footer / QR -->
+            <div class="text-center mt-4">
+                <div class="mb-2">
+                    <i class="fas fa-qrcode text-muted" style="font-size: 4rem; opacity: 0.15;"></i>
+                </div>
+                <p class="text-dark fw-bold m-0" style="font-size: 0.8rem; opacity: 0.6;">Verified by GymPro Automated System</p>
+                <p class="text-muted" style="font-size: 0.7rem;">Digital Copy - No Signature Required</p>
+            </div>
+        </div>
+
+        <!-- Buttons (Hidden in PDF) -->
+        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center animate-in animate-in-delay-1 pb-5">
+            <button onclick="downloadReceipt()" class="btn btn-warning px-5 py-3 fw-bold shadow-lg">
+                <i class="fas fa-file-pdf me-2"></i>Download Receipt
+            </button>
+            <button onclick="window.print()" class="btn btn-outline-light px-4">
+                <i class="fas fa-print me-2"></i>Print
+            </button>
+            <a href="{{ url_for('user_dashboard') }}" class="btn btn-link text-white text-decoration-none fw-bold mt-2 mt-sm-0">
+                Go to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- PDF Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+function downloadReceipt() {
+    const element = document.getElementById('receipt-content');
+    const opt = {
+        margin:       [0, 0], // Set margins to 0 and handle them in CSS
+        filename:     'FitNova-Receipt-{{ payment.transaction_id }}.pdf',
+        image:        { type: 'jpeg', quality: 1.0 },
+        html2canvas:  { 
+            scale: 2, 
+            useCORS: true, 
+            logging: false,
+            letterRendering: true,
+            scrollY: 0
+        },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    // Use html2pdf with the specific options
+    html2pdf().from(element).set(opt).save();
+}
+</script>
+
+<style>
+@media print {
+    body { background-color: white !important; }
+    .navbar, .btn, .site-footer, .alert { display: none !important; }
+    .container { width: 100% !important; max-width: none !important; padding: 0 !important; margin: 0 !important; }
+    #receipt-content { 
+        box-shadow: none !important; 
+        border: none !important; 
+        border-radius: 0 !important; 
+        width: 100% !important; 
+        margin: 0 !important; 
+        padding: 15mm !important; 
+        page-break-inside: avoid !important;
+    }
+    .animate-in { animation: none !important; }
+}
+#receipt-content {
+    font-family: 'Inter', sans-serif;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+        <div class="auth-card shadow-lg mt-4 animate-in">
+            <div class="text-center mb-4">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">
+                    <i class="fas fa-bolt text-gold"></i>
+                </div>
+                <h2 class="fw-bold text-white">JOIN THE <span class="text-gold">TEAM</span></h2>
+                <p class="text-muted small text-uppercase" style="letter-spacing: 3px; font-weight: 600;">Create your account</p>
+            </div>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-id-card me-1"></i>Full Name</label>
+                    <input type="text" class="form-control" name="full_name" placeholder="Your full name" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-envelope me-1"></i>Email Address</label>
+                    <input type="email" class="form-control" name="email" placeholder="you@example.com" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fas fa-user me-1"></i>Username</label>
+                    <input type="text" class="form-control" name="username" placeholder="Choose a username" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label"><i class="fas fa-lock me-1"></i>Password</label>
+                    <input type="password" class="form-control" name="password" placeholder="Create a password" required>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Create Account
+                    </button>
+                </div>
+            </form>
+            <div class="mt-4 text-center">
+                <p class="text-muted small">Already a member? <a href="{{ url_for('login') }}" class="text-gold text-decoration-none fw-bold">Sign In <i class="fas fa-arrow-right ms-1"></i></a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

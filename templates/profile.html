@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="auth-card animate-in">
+            <div class="d-flex align-items-center mb-4">
+                <div style="width:42px;height:42px;border-radius:10px;background:rgba(212,175,55,0.1);display:flex;align-items:center;justify-content:center;" class="me-3">
+                    <i class="fas fa-heart-pulse text-gold"></i>
+                </div>
+                <div>
+                    <h3 class="text-gold mb-0 fw-bold">Health Profile</h3>
+                    <p class="text-muted small mb-0">Track your fitness metrics</p>
+                </div>
+            </div>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="text-center mb-4">
+                    <div class="avatar-wrapper mb-2">
+                        {% if profile and profile.profile_pic %}
+                            <img src="{{ url_for('static', filename='uploads/profiles/' + profile.profile_pic) }}" class="avatar-image" id="avatarPreview">
+                        {% else %}
+                            <div class="avatar-placeholder" id="avatarPlaceholder">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <label for="profile_pic" class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-upload me-1"></i>Change Photo
+                    </label>
+                    <input type="file" name="profile_pic" id="profile_pic" class="d-none" onchange="previewImage(this)">
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
+                        <label class="form-label"><i class="fas fa-calendar-days me-1"></i>Age</label>
+                        <input type="number" name="age" class="form-control" placeholder="Age" value="{{ profile.age if profile else '' }}">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label"><i class="fas fa-venus-mars me-1"></i>Gender</label>
+                        <select name="gender" class="form-control">
+                            <option value="Male" {% if profile and profile.gender == 'Male' %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if profile and profile.gender == 'Female' %}selected{% endif %}>Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
+                        <label class="form-label"><i class="fas fa-ruler-vertical me-1"></i>Height (cm)</label>
+                        <input type="number" step="0.1" name="height" class="form-control" placeholder="Height" value="{{ profile.height if profile else '' }}">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label"><i class="fas fa-weight-scale me-1"></i>Weight (kg)</label>
+                        <input type="number" step="0.1" name="weight" class="form-control" placeholder="Weight" value="{{ profile.weight if profile else '' }}">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label"><i class="fas fa-bullseye me-1"></i>Fitness Goal</label>
+                    <textarea name="goal" class="form-control" rows="3" placeholder="Describe your fitness goal...">{{ profile.health_goal if profile else '' }}</textarea>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-floppy-disk me-1"></i>Save Profile
+                    </button>
+                    <a href="{{ url_for('user_dashboard') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            let preview = document.getElementById('avatarPreview');
+            let placeholder = document.getElementById('avatarPlaceholder');
+            if (preview) {
+                preview.src = e.target.result;
+            } else if (placeholder) {
+                // Replace placeholder with img
+                placeholder.outerHTML = `<img src="${e.target.result}" class="avatar-image" id="avatarPreview">`;
+            }
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+{% endblock %}

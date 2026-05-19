@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 animate-in">
+    <div>
+        <h3 class="text-gold fw-bold mb-1"><i class="fas fa-file-lines me-2"></i>Applications</h3>
+        <p class="text-muted small mb-0">Review and manage member requests</p>
+    </div>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left me-1"></i>Back
+    </a>
+</div>
+<div class="card animate-in animate-in-delay-1">
+    <div class="table-responsive">
+        <table class="table table-dark table-hover mb-0">
+            <thead>
+                <tr>
+                    <th><i class="fas fa-user me-1"></i>Member</th>
+                    <th><i class="fas fa-layer-group me-1"></i>Plan</th>
+                    <th><i class="fas fa-circle-info me-1"></i>Status</th>
+                    <th><i class="fas fa-bolt me-1"></i>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                <tr class="align-middle">
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div style="width:34px;height:34px;border-radius:8px;background:rgba(212,175,55,0.1);display:flex;align-items:center;justify-content:center;" class="me-2">
+                                <i class="fas fa-user text-gold" style="font-size:0.75rem;"></i>
+                            </div>
+                            <div>
+                                <span class="fw-bold">{{ app.full_name }}</span><br>
+                                <small class="text-muted">@{{ app.username }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="fw-bold">{{ app.plan_name }}</span></td>
+                    <td>
+                        <span class="badge {% if app.status=='pending' %}bg-warning{% elif app.status=='approved' %}bg-success{% else %}bg-danger{% endif %}">
+                            {% if app.status=='pending' %}<i class="fas fa-hourglass-half me-1"></i>
+                            {% elif app.status=='approved' %}<i class="fas fa-check me-1"></i>
+                            {% else %}<i class="fas fa-xmark me-1"></i>{% endif %}
+                            {{ app.status }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if app.status == 'pending' %}
+                            <a href="{{ url_for('update_application', id=app.id, status='approved') }}" class="btn btn-success btn-sm me-1">
+                                <i class="fas fa-check me-1"></i>Approve
+                            </a>
+                            <a href="{{ url_for('update_application', id=app.id, status='rejected') }}" class="btn btn-danger btn-sm">
+                                <i class="fas fa-xmark me-1"></i>Reject
+                            </a>
+                        {% else %}
+                            <span class="text-muted small">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if not applications %}
+<div class="card animate-in mt-3">
+    <div class="card-body text-center py-5">
+        <i class="fas fa-inbox text-muted mb-3" style="font-size: 2rem;"></i>
+        <p class="text-muted mb-0">No applications to review.</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if session.get('role') == 'admin' %}
+<!-- ADMIN VIEW -->
+<div class="row">
+    <div class="col-md-12 mb-4 animate-in">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-snowflake text-info me-3" style="font-size: 2rem;"></i>
+                <div>
+                    <h2 class="text-gold fw-bold mb-0">Freeze Requests</h2>
+                    <p class="text-muted mb-0 small">Review and manage membership pause/resume requests.</p>
+                </div>
+            </div>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-12 animate-in animate-in-delay-1">
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Member</th>
+                                <th>Plan</th>
+                                <th>Reason</th>
+                                <th>Proof</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for req in requests %}
+                            <tr>
+                                <td>{{ req.request_date.strftime('%b %d, %Y') if req.request_date.strftime else req.request_date }}</td>
+                                <td>
+                                    <strong>{{ req.full_name }}</strong><br>
+                                    <small class="text-muted">{{ req.email }}</small>
+                                </td>
+                                <td>{{ req.plan_name }}</td>
+                                <td style="max-width: 200px; white-space: normal;">
+                                    <small class="text-light">{{ req.reason }}</small>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('static', filename='uploads/medical_certs/' + req.medical_certificate) }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-image me-1"></i>View
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge 
+                                        {% if req.status == 'approved' %}bg-info
+                                        {% elif req.status == 'pending' %}bg-warning
+                                        {% elif req.status == 'rejected' %}bg-danger
+                                        {% else %}bg-success{% endif %}">
+                                        {{ req.status.upper() }}
+                                    </span>
+                                    {% if req.status == 'approved' and req.frozen_date %}
+                                        <br><small class="text-muted">Since: {{ req.frozen_date.strftime('%b %d') if req.frozen_date.strftime else req.frozen_date }}</small>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    {% if req.status == 'pending' %}
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('update_freeze_request', id=req.id, action='approve') }}" class="btn btn-sm btn-success" title="Approve">
+                                                <i class="fas fa-check"></i>
+                                            </a>
+                                            <a href="{{ url_for('update_freeze_request', id=req.id, action='reject') }}" class="btn btn-sm btn-danger" title="Reject">
+                                                <i class="fas fa-xmark"></i>
+                                            </a>
+                                        </div>
+                                    {% elif req.status == 'approved' %}
+                                        <a href="{{ url_for('update_freeze_request', id=req.id, action='resume') }}" class="btn btn-sm btn-success" onclick="return confirm('Are you sure you want to resume this membership? This will extend their expiry date.');">
+                                            <i class="fas fa-play me-1"></i>Resume
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">
+                                    <i class="fas fa-inbox mb-2" style="font-size: 1.5rem;"></i><br>
+                                    No freeze requests found.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- USER VIEW -->
+<div class="row justify-content-center">
+    <div class="col-md-8 animate-in">
+        <div class="card" style="border-color: rgba(212,175,55,0.2);">
+            <div class="card-header bg-transparent border-0 pt-4 pb-0">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width:40px;height:40px;border-radius:10px;background:rgba(212,175,55,0.1);display:flex;align-items:center;justify-content:center;" class="me-3">
+                        <i class="fas fa-snowflake text-info"></i>
+                    </div>
+                    <h4 class="text-gold mb-0 fw-bold">Request Membership Freeze</h4>
+                </div>
+                <p class="text-muted small">
+                    If you have an injury or health issue that prevents you from working out, you can request to freeze your membership plan. 
+                    Your remaining membership duration will be paused upon admin approval.
+                </p>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('request_freeze') }}" method="POST" enctype="multipart/form-data">
+                    <div class="mb-4">
+                        <label for="reason" class="form-label text-light">Reason for Freezing</label>
+                        <textarea class="form-control bg-dark text-light" id="reason" name="reason" rows="3" placeholder="Please describe your health issue or injury..." required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="medical_cert" class="form-label text-light">Upload Medical Certificate / Proof of Injury</label>
+                        <input class="form-control bg-dark text-light" type="file" id="medical_cert" name="medical_cert" accept=".png, .jpg, .jpeg, .gif" required>
+                        <div class="form-text text-muted">Accepted formats: PNG, JPG, JPEG, GIF.</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-5">
+                        <a href="{{ url_for('user_dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-info px-4">
+                            <i class="fas fa-paper-plane me-1"></i>Submit Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

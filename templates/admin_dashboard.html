@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Hero Section -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="hero-section animate-in">
+            <div class="d-flex align-items-center mb-3">
+                <i class="fas fa-shield-halved text-gold me-3" style="font-size: 2rem;"></i>
+                <div>
+                    <h1 class="fw-bold text-gold mb-0" style="font-size: 2rem;">Admin Dashboard</h1>
+                    <p class="text-muted mb-0" style="font-size: 0.85rem;">FitNova — Information Management System</p>
+                </div>
+            </div>
+            <hr style="border-color: rgba(212,175,55,0.15);">
+            <div class="row mt-4 g-3">
+                <div class="col-md-4 animate-in animate-in-delay-1">
+                    <div class="stat-card">
+                        <span class="stat-icon text-gold"><i class="fas fa-users"></i></span>
+                        <h2 class="text-gold">{{ total_users }}</h2>
+                        <p>Total Members</p>
+                    </div>
+                </div>
+                <div class="col-md-4 animate-in animate-in-delay-2">
+                    <div class="stat-card">
+                        <span class="stat-icon" style="color: var(--accent-blue);"><i class="fas fa-clock"></i></span>
+                        <h2 style="color: var(--accent-blue);">{{ pending_apps }}</h2>
+                        <p>Pending Applications</p>
+                    </div>
+                </div>
+                <div class="col-md-4 animate-in animate-in-delay-3">
+                    <div class="stat-card">
+                        <span class="stat-icon" style="color: var(--accent-green);"><i class="fas fa-peso-sign"></i></span>
+                        <h2 style="color: var(--accent-green);">₱{{ "{:,.2f}".format(total_revenue) }}</h2>
+                        <p>Total Revenue</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-3">
+    <div class="col-md-3 animate-in animate-in-delay-1">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width:42px;height:42px;border-radius:10px;background:rgba(212,175,55,0.1);display:flex;align-items:center;justify-content:center;" class="me-3">
+                        <i class="fas fa-layer-group text-gold"></i>
+                    </div>
+                    <h5 class="text-gold mb-0">Plans</h5>
+                </div>
+                <p class="small text-muted flex-grow-1">Manage membership tiers and pricing.</p>
+                <a href="{{ url_for('manage_plans') }}" class="btn btn-primary w-100">
+                    <i class="fas fa-gear me-1"></i>Manage
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 animate-in animate-in-delay-2">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width:42px;height:42px;border-radius:10px;background:rgba(52,152,219,0.1);display:flex;align-items:center;justify-content:center;" class="me-3">
+                        <i class="fas fa-file-lines" style="color: var(--accent-blue);"></i>
+                    </div>
+                    <h5 class="text-gold mb-0">Applications</h5>
+                </div>
+                <p class="small text-muted flex-grow-1">Review and process member applications.</p>
+                <a href="{{ url_for('view_applications') }}" class="btn btn-primary w-100">
+                    <i class="fas fa-eye me-1"></i>Review
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 animate-in animate-in-delay-3">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width:42px;height:42px;border-radius:10px;background:rgba(46,204,113,0.1);display:flex;align-items:center;justify-content:center;" class="me-3">
+                        <i class="fas fa-receipt" style="color: var(--accent-green);"></i>
+                    </div>
+                    <h5 class="text-gold mb-0">Payments</h5>
+                </div>
+                <p class="small text-muted flex-grow-1">View transaction logs and history.</p>
+                <a href="{{ url_for('view_payments') }}" class="btn btn-primary w-100">
+                    <i class="fas fa-list me-1"></i>View Logs
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 animate-in" style="animation-delay: 0.4s;">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width:42px;height:42px;border-radius:10px;background:rgba(212,175,55,0.1);display:flex;align-items:center;justify-content:center;" class="me-3">
+                        <i class="fas fa-users text-gold"></i>
+                    </div>
+                    <h5 class="text-gold mb-0">Members</h5>
+                </div>
+                <p class="small text-muted flex-grow-1">Manage users and view their memberships.</p>
+                <a href="{{ url_for('view_members') }}" class="btn btn-primary w-100">
+                    <i class="fas fa-user-group me-1"></i>View All
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 animate-in mt-3" style="animation-delay: 0.5s;">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width:42px;height:42px;border-radius:10px;background:rgba(23,162,184,0.1);display:flex;align-items:center;justify-content:center;" class="me-3">
+                        <i class="fas fa-snowflake text-info"></i>
+                    </div>
+                    <h5 class="text-gold mb-0">Freeze Requests</h5>
+                </div>
+                <p class="small text-muted flex-grow-1">Manage membership freeze and resume requests.</p>
+                <a href="{{ url_for('view_freeze_requests') }}" class="btn btn-primary w-100">
+                    <i class="fas fa-snowflake me-1"></i>Manage
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
